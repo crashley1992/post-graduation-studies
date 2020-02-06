@@ -89,7 +89,7 @@ layer_list.forEach((layer, index) => {
     layer.image.onload = () => {
         load_counter += 1;
         if (load_counter >= layer_list.length) {
-            drawCanvas();
+            requestAnimationFrame(drawCanvas);
         }
     }
     layer.image.src = layer.src;
@@ -99,8 +99,17 @@ const drawCanvas = () => {
 //clear whatever is in the canvas
     context.clearRect(0, 0, canvas.width, canvas.height);
 
-//loop through each layer and draw it to the canvas
-layer_list.forEach((layer, index) => {
+    //loop through each layer and draw it to the canvas
+    layer_list.forEach((layer, index) => {
+        if (layer.blend) {
+            context.globalCompositeOperation = layer.blend;
+        } else {
+            context.globalCompositeOperation = 'normal';
+        }
+
+        context.globalAlpha = layer.opacity;
+
         context.drawImage(layer.image, layer.position.x, layer.position.y)
     })
+    requestAnimationFrame(drawCanvas);
 }
