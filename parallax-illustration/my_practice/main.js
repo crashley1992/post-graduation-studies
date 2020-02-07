@@ -101,6 +101,9 @@ const drawCanvas = () => {
 
     //loop through each layer and draw it to the canvas
     layer_list.forEach((layer, index) => {
+
+        layer.position = getOffset(layer);
+
         if (layer.blend) {
             context.globalCompositeOperation = layer.blend;
         } else {
@@ -113,3 +116,110 @@ const drawCanvas = () => {
     })
     requestAnimationFrame(drawCanvas);
 }
+
+const getOffset = (layer) => {
+    // Calculate the amount you want the layers to move based on touch or mouse input.
+	// You can play with the touch_multiplier variable here. Depending on the size of your canvas you may want to turn it up or down.
+    const touch_multiplier = 0.3;
+    let touch_offset_x = pointer.x * layer.z_index * touch_multiplier;
+    let touch_offset_y = pointer.y * layer.z_index * touch_multiplier;
+
+	// var motion_multiplier = 2.5;
+	// var motion_offset_x = motion.x * layer.z_index * motion_multiplier;
+	// var motion_offset_y = motion.y * layer.z_index * motion_multiplier;
+
+    // Calculate the amount you want the layers to move based on the gyroscope
+	// You can play with the motion_multiplier variable here. Depending on the size of your canvas you may want to turn it up or down.
+    const offset = {
+        x: touch_offset_x,
+        y: touch_offset_y
+    };
+    // Return the calculated offset to whatever requested it.
+    return offset;
+}
+
+// TOUCH AND MOUSE CONTROLS
+let moving = false;
+
+//Inizalize touch and mouse position
+const pointer_initial = {
+    x: 0,
+    y: 0,
+};
+
+const pointer = {
+    x: 0,
+    y: 0
+};
+
+const pointerStart = (event) => {
+    moving = true;
+	// Check if this is a touch event
+	if (event.type === 'touchstart') {
+		// set initial touch position to the coordinates where you first touched the screen
+		pointer_initial.x = event.touches[0].clientX;
+		pointer_initial.y = event.touches[0].clientY;
+	// Check if this is a mouse click event
+	} else if (event.type === 'mousedown') {
+		// set initial mouse position to the coordinates where you first clicked
+		pointer_initial.x = event.clientX;
+		pointer_initial.y = event.clientY;
+	}
+}
+//event listensers for when screen is touch or mouse is moved to direct image
+
+// This one listens for when you start touching the canvas element
+canvas.addEventListener('touchstart', pointerStart);
+// This one listens for when you start clicking on the canvas (when you press the mouse button down)
+canvas.addEventListener('mousedown', pointerStart);
+
+const pointerMove = (event) => {
+    	// This is important to prevent scrolling the page instead of moving layers around
+    event.preventDefault();
+    	// Only run this if touch or mouse click has started
+    if (moving === true) {
+        let current_x = 0;
+        let current_y = 0;
+        if (event.type === 'touchmove') {
+           	// Current position of touch
+			current_x = event.touches[0].clientX;
+			current_y = event.touches[0].clientY;
+        } else if (event.type === 'mousemove') {
+           // Current position of mouse cursor
+			current_x = event.clientX;
+			current_y = event.clientY;
+        }
+        // Set pointer position to the difference between current position and initial position
+        pointer.x = current_x - pointer_initial.x
+        pointer.y = current_y - pointer_initial.y;
+    }
+}
+
+// This runs whenever your finger moves anywhere in the browser window
+window.addEventListener('touchmove', pointerMove);
+// This runs whenever your mouse moves anywhere in the browser window
+window.addEventListener('mousemove', pointerMove);
+
+
+canvas.addEventListener('touchmove', (event) => {
+    event.preventDefault();
+});
+
+canvas.addEventListener('mousemove', (event) => {
+    event.preventDefault();
+});
+
+window.addEventListener('touchend', (event) => {
+    endGesture();
+});
+
+window.addEventListener('mouseup', (event) => {
+    endGesture();
+});
+
+const endGesture = () => {
+    moving = false;
+    pointer.x = 0;
+    pointer.y = 0;
+}
+
