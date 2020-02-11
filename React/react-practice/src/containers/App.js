@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import './App.css';
-import Person from './Person/Person';
-import people from './people.json';
-import Occupation from './Occupation/Occupation';
+import Person from '../component/Persons/Person/Person';
+import people from '../people.json';
+import Occupation from '../component/Occupation/Occupation';
+import Persons from '../component/Persons/Persons';
 
 class App extends Component {
   state = {
@@ -25,7 +26,7 @@ class App extends Component {
 
     this.setState( {
     people: people
-     })
+     }) 
   }
    
   togglePersonsHandler = () => {
@@ -54,13 +55,11 @@ class App extends Component {
     if (this.state.showPersons) {
       people = (
         <div>
-        {/* map will map an array into an array with JSX objects */}
-        {this.state.people.map((person, index) =>(<Person
-        key={person.id}
-        name={person.name}
-        changed={(event) => this.nameChangedHandler(event, person.id)}
-        click={() => this.deletePersonHandler(index)}
-        />))}
+        <Persons 
+          persons={this.state.persons}
+          clicked={this.this.deletePersonHandler}
+          changed={this.nameChangedHandler}
+        />
     </div> 
       )
     }
