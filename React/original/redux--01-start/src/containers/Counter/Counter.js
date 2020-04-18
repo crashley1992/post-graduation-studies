@@ -29,16 +29,15 @@ class Counter extends Component {
         return (
             <div>
                 <CounterOutput value={this.props.ctr} />
-                <CounterControl label="Increment" clicked={() => this.counterChangedHandler( 'inc' )} />
-                <CounterControl label="Decrement" clicked={() => this.counterChangedHandler( 'dec' )}  />
-                <CounterControl label="Add 5" clicked={() => this.counterChangedHandler( 'add', 5 )}  />
-                <CounterControl label="Subtract 5" clicked={() => this.counterChangedHandler( 'sub', 5 )}  />
+                <CounterControl label="Increment" clicked={this.props.onIncrementCounter} />
+                <CounterControl label="Decrement" clicked={this.props.onDecrementCounter} />
+                <CounterControl label="Add 5" clicked={this.props.onAddFive}  />
+                <CounterControl label="Subtract 5" clicked={this.props.onSubFive}  />
             </div>
         );
     }
 }
 
-//redux package passes it
 const mapStateToProps = state => {
     return {
         //ctr represents counter could be anything
@@ -46,4 +45,13 @@ const mapStateToProps = state => {
     };
 }
 
-export default connect(mapStateToProps)(Counter);
+const mapDispatchToProps = dispatch => {
+    return {
+        onIncrementCounter: () => dispatch({type: 'INCREMENT', value: 1}),
+        onDecrementCounter: () => dispatch({type: 'DECREMENT', value: 1}),
+        onAddFive: () => dispatch({type: 'ADD_FIVE', value: 5 }),
+        onSubFive: () => dispatch({type: 'SUB_FIVE', value: 5})
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Counter);
