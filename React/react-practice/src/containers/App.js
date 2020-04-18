@@ -6,6 +6,11 @@ import Occupation from '../component/Occupation/Occupation';
 import Persons from '../component/Persons/Persons';
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    console.log( '[[App.js] constructor');
+  }
+
   state = {
     people,
     showPersons: false
